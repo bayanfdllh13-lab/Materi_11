@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sistem Data Mahasiswa</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+background:#0f172a;
+padding:30px;
+color:white;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.simpan{
+background:#2563eb;
+color:white;
+width:100%;
+}
+
+.hapus{
+background:#dc2626;
+color:white;
+}
+
+.statistik{
+display:flex;
+gap:15px;
+margin-top:15px;
+}
+
+.box{
+flex:1;
+background:#334155;
+padding:15px;
+border-radius:10px;
+text-align:center;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+th,td{
+padding:12px;
+border:1px solid #475569;
+text-align:center;
+}
+
+th{
+background:#334155;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>SISTEM DATA MAHASISWA</h1>
+
+<div class="card">
+
+<h2>Input Biodata Mahasiswa</h2>
+
+<input type="text" id="nim" placeholder="Masukkan NIM">
+
+<input type="text" id="nama" placeholder="Masukkan Nama">
+
+<input type="text" id="prodi" placeholder="Masukkan Program Studi">
+
+<select id="semester">
+<option value="">Pilih Semester</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+</select>
+
+<button class="simpan" onclick="tambahMahasiswa()">
+Simpan Data
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Statistik</h2>
+
+<div class="statistik">
+
+<div class="box">
+<h3 id="jumlahData">0</h3>
+<p>Total Mahasiswa</p>
+</div>
+
+<div class="box">
+<h3 id="semester2">0</h3>
+<p>Semester 2</p>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Daftar Mahasiswa</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>No</th>
+<th>NIM</th>
+<th>Nama</th>
+<th>Prodi</th>
+<th>Semester</th>
+<th>Aksi</th>
+</tr>
+</thead>
+
+<tbody id="tabelMahasiswa">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let mahasiswa = [];
+
+function tambahMahasiswa(){
+
+let nim = document.getElementById("nim").value;
+let nama = document.getElementById("nama").value;
+let prodi = document.getElementById("prodi").value;
+let semester = document.getElementById("semester").value;
+
+if(
+nim==="" ||
+nama==="" ||
+prodi==="" ||
+semester===""
+){
+alert("Semua data harus diisi!");
+return;
+}
+
+mahasiswa.push({
+nim,
+nama,
+prodi,
+semester
+});
+
+tampilkanData();
+resetForm();
+
+}
+
+function tampilkanData(){
+
+let tabel =
+document.getElementById("tabelMahasiswa");
+
+tabel.innerHTML="";
+
+mahasiswa.forEach((m,index)=>{
+
+tabel.innerHTML += `
+<tr>
+<td>${index+1}</td>
+<td>${m.nim}</td>
+<td>${m.nama}</td>
+<td>${m.prodi}</td>
+<td>${m.semester}</td>
+<td>
+<button
+class="hapus"
+onclick="hapusData(${index})">
+Hapus
+</button>
+</td>
+</tr>
+`;
+
+});
+
+updateStatistik();
+
+}
+
+function hapusData(index){
+
+mahasiswa.splice(index,1);
+
+tampilkanData();
+
+}
+
+function updateStatistik(){
+
+document.getElementById("jumlahData")
+.innerText = mahasiswa.length;
+
+let totalSemester2 =
+mahasiswa.filter(
+m => m.semester == 2
+).length;
+
+document.getElementById("semester2")
+.innerText = totalSemester2;
+
+}
+
+function resetForm(){
+
+document.getElementById("nim").value="";
+document.getElementById("nama").value="";
+document.getElementById("prodi").value="";
+document.getElementById("semester").value="";
+
+}
+
+</script>
+
+</body>
+</html>

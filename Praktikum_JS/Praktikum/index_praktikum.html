@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Data Mahasiswa Pro</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,sans-serif}
+body{background:#0f172a;color:#fff;padding:20px}
+.container{max-width:1200px;margin:auto}
+h1{text-align:center;margin-bottom:20px}
+.card{background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+input,select{width:100%;padding:12px;border:none;border-radius:10px;margin:8px 0}
+button{padding:12px;border:none;border-radius:10px;cursor:pointer}
+.primary{background:#2563eb;color:white}
+.danger{background:#dc2626;color:white}
+.warning{background:#f59e0b;color:black}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.stat{background:#334155;padding:15px;border-radius:12px;text-align:center}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #475569;padding:10px;text-align:center}
+th{background:#334155}
+.actions button{margin:2px}
+@media(max-width:768px){.grid,.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎓 Sistem Data Mahasiswa Pro</h1>
+
+<div class="grid">
+<div class="card">
+<h2>Input Data</h2>
+<input id="nim" placeholder="NIM">
+<input id="nama" placeholder="Nama Mahasiswa">
+<input id="prodi" placeholder="Program Studi">
+<select id="semester">
+<option value="">Pilih Semester</option>
+<option>1</option><option>2</option><option>3</option><option>4</option>
+<option>5</option><option>6</option><option>7</option><option>8</option>
+</select>
+<button class="primary" onclick="simpanData()">💾 Simpan</button>
+</div>
+
+<div class="card">
+<h2>🔍 Cari Mahasiswa</h2>
+<input id="cari" placeholder="Ketik nama..." onkeyup="cariData()">
+<p>Data tersimpan otomatis menggunakan Local Storage.</p>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat"><h2 id="total">0</h2><p>Total Mahasiswa</p></div>
+<div class="stat"><h2 id="sem2">0</h2><p>Semester 2</p></div>
+<div class="stat"><h2 id="semLain">0</h2><p>Semester Lain</p></div>
+</div>
+
+<div class="card">
+<h2>📋 Data Mahasiswa</h2>
+<table>
+<thead>
+<tr>
+<th>No</th><th>NIM</th><th>Nama</th><th>Prodi</th><th>Semester</th><th>Aksi</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+</div>
+
+<script>
+let mahasiswa = JSON.parse(localStorage.getItem("mahasiswa")) || [];
+let editIndex = -1;
+
+function simpanKeStorage(){
+ localStorage.setItem("mahasiswa", JSON.stringify(mahasiswa));
+}
+
+function simpanData(){
+ let nim=nimEl.value.trim();
+ let nama=namaEl.value.trim();
+ let prodi=prodiEl.value.trim();
+ let semester=semesterEl.value;
+
+ if(!nim||!nama||!prodi||!semester){
+   alert("Semua data wajib diisi!");
+   return;
+ }
+
+ const data={nim,nama,prodi,semester};
+
+ if(editIndex==-1){
+   mahasiswa.push(data);
+ }else{
+   mahasiswa[editIndex]=data;
+   editIndex=-1;
+ }
+
+ simpanKeStorage();
+ resetForm();
+ tampilkanData(mahasiswa);
+}
+
+function tampilkanData(data){
+ tbody.innerHTML="";
+ data.forEach((m,i)=>{
+ tbody.innerHTML += `
+ <tr>
+ <td>${i+1}</td>
+ <td>${m.nim}</td>
+ <td>${m.nama}</td>
+ <td>${m.prodi}</td>
+ <td>${m.semester}</td>
+ <td class="actions">
+ <button class="warning" onclick="editData(${i})">Edit</button>
+ <button class="danger" onclick="hapusData(${i})">Hapus</button>
+ </td>
+ </tr>`;
+ });
+ updateStat();
+}
+
+function editData(i){
+ nimEl.value=mahasiswa[i].nim;
+ namaEl.value=mahasiswa[i].nama;
+ prodiEl.value=mahasiswa[i].prodi;
+ semesterEl.value=mahasiswa[i].semester;
+ editIndex=i;
+}
+
+function hapusData(i){
+ if(confirm("Hapus data ini?")){
+ mahasiswa.splice(i,1);
+ simpanKeStorage();
+ tampilkanData(mahasiswa);
+ }
+}
+
+function cariData(){
+ let key=cari.value.toLowerCase();
+ let hasil=mahasiswa.filter(m=>m.nama.toLowerCase().includes(key));
+ tampilkanData(hasil);
+}
+
+function updateStat(){
+ total.innerText=mahasiswa.length;
+ sem2.innerText=mahasiswa.filter(m=>m.semester=="2").length;
+ semLain.innerText=mahasiswa.filter(m=>m.semester!="2").length;
+}
+
+function resetForm(){
+ nimEl.value="";
+ namaEl.value="";
+ prodiEl.value="";
+ semesterEl.value="";
+}
+
+const nimEl=document.getElementById("nim");
+const namaEl=document.getElementById("nama");
+const prodiEl=document.getElementById("prodi");
+const semesterEl=document.getElementById("semester");
+const tbody=document.getElementById("tbody");
+const cari=document.getElementById("cari");
+const total=document.getElementById("total");
+const sem2=document.getElementById("sem2");
+const semLain=document.getElementById("semLain");
+
+tampilkanData(mahasiswa);
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validasi Form Nama</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#0f172a;
+    min-height:100vh;
+    padding:30px;
+    color:white;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.title h1{
+    font-size:40px;
+}
+
+.title p{
+    color:#94a3b8;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:#1e293b;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.3);
+}
+
+input{
+    width:100%;
+    padding:15px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+.counter{
+    margin-top:8px;
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.btn-group{
+    display:flex;
+    gap:10px;
+    margin-top:15px;
+}
+
+button{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.btn-validasi{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-reset{
+    background:#dc2626;
+    color:white;
+}
+
+.rule{
+    margin:10px 0;
+    padding:10px;
+    border-radius:8px;
+    background:#334155;
+}
+
+.valid{
+    color:#22c55e;
+}
+
+.invalid{
+    color:#ef4444;
+}
+
+#hasil{
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#334155;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+table th,
+table td{
+    padding:12px;
+    border:1px solid #475569;
+    text-align:center;
+}
+
+table th{
+    background:#334155;
+}
+
+.status-valid{
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.status-invalid{
+    color:#ef4444;
+    font-weight:bold;
+}
+
+.footer{
+    text-align:center;
+    margin-top:30px;
+    color:#94a3b8;
+}
+
+@media(max-width:768px){
+
+.grid{
+    grid-template-columns:1fr;
+}
+
+.title h1{
+    font-size:30px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="title">
+<h1>VALIDASI FORM NAMA</h1>
+<p>Validasi nama mahasiswa menggunakan JavaScript DOM</p>
+</div>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>Masukkan Nama</h2>
+
+<input
+type="text"
+id="nama"
+placeholder="Masukkan nama lengkap">
+
+<div class="counter">
+Karakter:
+<span id="jumlahKarakter">0</span>
+</div>
+
+<div class="btn-group">
+<button class="btn-validasi" id="btnCek">
+Validasi
+</button>
+
+<button class="btn-reset" id="btnReset">
+Reset
+</button>
+</div>
+
+<div id="hasil">
+Silakan masukkan nama.
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Aturan Validasi</h2>
+
+<div class="rule" id="rule1">
+❌ Nama tidak boleh kosong
+</div>
+
+<div class="rule" id="rule2">
+❌ Minimal 3 karakter
+</div>
+
+<div class="rule" id="rule3">
+❌ Hanya huruf dan spasi
+</div>
+
+<div class="rule" id="rule4">
+❌ Tidak boleh angka
+</div>
+
+</div>
+
+</div>
+
+<div class="card" style="margin-top:20px;">
+
+<h2>Riwayat Validasi</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>Waktu</th>
+<th>Nama</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="riwayatTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+<div class="footer">
+© 2026 - Ahmad Bayan Fadillah
+</div>
+
+</div>
+
+<script>
+
+const namaInput = document.getElementById("nama");
+const jumlahKarakter = document.getElementById("jumlahKarakter");
+
+let riwayat = [];
+
+namaInput.addEventListener("input", function(){
+
+jumlahKarakter.textContent = this.value.length;
+
+validasiRealtime();
+
+});
+
+function validasiRealtime(){
+
+let nama = namaInput.value.trim();
+
+document.getElementById("rule1").className =
+nama !== "" ? "rule valid" : "rule invalid";
+
+document.getElementById("rule2").className =
+nama.length >= 3 ? "rule valid" : "rule invalid";
+
+document.getElementById("rule3").className =
+/^[A-Za-z\s]+$/.test(nama) && nama !== ""
+? "rule valid"
+: "rule invalid";
+
+document.getElementById("rule4").className =
+!/[\d]/.test(nama)
+? "rule valid"
+: "rule invalid";
+
+}
+
+function validasiNama(){
+
+let nama = namaInput.value.trim();
+
+let hasil = document.getElementById("hasil");
+
+let valid =
+nama !== "" &&
+nama.length >= 3 &&
+/^[A-Za-z\s]+$/.test(nama);
+
+let waktu = new Date().toLocaleString("id-ID");
+
+if(valid){
+
+hasil.innerHTML =
+"✅ Nama valid: <b>" + nama + "</b>";
+
+hasil.style.color="#22c55e";
+
+}
+else{
+
+hasil.innerHTML =
+"❌ Nama tidak valid";
+
+hasil.style.color="#ef4444";
+
+}
+
+riwayat.push({
+waktu:waktu,
+nama:nama,
+status:valid ? "VALID" : "INVALID"
+});
+
+tampilkanRiwayat();
+
+}
+
+function tampilkanRiwayat(){
+
+let tabel = document.getElementById("riwayatTable");
+
+tabel.innerHTML = "";
+
+riwayat.forEach(data => {
+
+tabel.innerHTML += `
+<tr>
+<td>${data.waktu}</td>
+<td>${data.nama}</td>
+<td class="${
+data.status==="VALID"
+?
+"status-valid"
+:
+"status-invalid"
+}">
+${data.status}
+</td>
+</tr>
+`;
+
+});
+
+}
+
+function resetForm(){
+
+namaInput.value = "";
+jumlahKarakter.textContent = "0";
+
+document.getElementById("hasil").innerHTML =
+"Silakan masukkan nama.";
+
+document.getElementById("hasil").style.color =
+"white";
+
+validasiRealtime();
+
+}
+
+document
+.getElementById("btnCek")
+.addEventListener("click",validasiNama);
+
+document
+.getElementById("btnReset")
+.addEventListener("click",resetForm);
+
+</script>
+
+</body>
+</html>
